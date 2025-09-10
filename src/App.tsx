@@ -1027,7 +1027,7 @@ const App: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             background: '#594D8D',
-            padding: '1rem',
+            padding: '0.5rem',
             boxSizing: 'border-box',
             overflow: 'hidden',
             position: 'relative'
@@ -1043,7 +1043,7 @@ const App: React.FC = () => {
               justifyContent: 'space-evenly',
               position: 'relative',
               zIndex: 1,
-              padding: '1rem 0',
+              padding: '0.5rem 0',
               minHeight: 0
             }}>
               {/* Logo Multiplica Day */}
@@ -1362,13 +1362,13 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Logo Galicia al final - ahora como parte normal del layout */}
+            {/* Logo Galicia al final - volviendo al layout normal */}
             <div style={{
-              padding: '1rem 0 1.5rem 0',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              flexShrink: 0
+              flexShrink: 0,
+              transform: 'translateY(-2rem)'
             }}>
               <img 
                 src="/AVATAR_GALICIA.png" 
@@ -1447,7 +1447,7 @@ const App: React.FC = () => {
               {/* Logo Galicia al final - positioned absolute */}
               <div style={{
                 position: 'absolute',
-                bottom: 'calc(1rem - 640px)',
+                bottom: 'calc(1rem - 700px)',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 zIndex: 1
