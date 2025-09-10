@@ -4,6 +4,10 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import https from 'https';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 const app = express();
 const PORT = 3002; // Cambiamos puerto para evitar conflictos
@@ -32,6 +36,74 @@ if (!fs.existsSync(SAVE_PATH)) {
     }
 } else {
     console.log('✅ Carpeta ya existe:', SAVE_PATH);
+}
+
+// Función para imprimir imagen silenciosamente en Windows
+async function printImageSilently(filepath) {
+    console.log('🖨️ Iniciando impresión silenciosa de:', filepath);
+    
+    // Método 1: Usar PowerShell con Add-PrinterJob (más moderno)
+    try {
+        console.log('💻 Método 1: Intentando con PowerShell Add-Printer...');
+        
+        const psCommand1 = `powershell -Command "& {Add-Type -AssemblyName System.Drawing; Add-Type -AssemblyName System.Windows.Forms; $img = [System.Drawing.Image]::FromFile('${filepath}'); $pd = New-Object System.Drawing.Printing.PrintDocument; $pd.PrinterSettings.PrinterName = (Get-WmiObject -Class Win32_Printer | Where-Object {$_.Default -eq $true}).Name; $pd.DefaultPageSettings.PrinterSettings = $pd.PrinterSettings; $pd.DefaultPageSettings.Margins = New-Object System.Drawing.Printing.Margins(0,0,0,0); $pd.add_PrintPage({param($sender, $e) $bounds = New-Object System.Drawing.Rectangle(0, 0, $e.PageBounds.Width, $e.PageBounds.Height); $e.Graphics.DrawImage($img, $bounds)}); $pd.Print(); $img.Dispose()}"`;
+        
+        await execAsync(psCommand1);
+        console.log('✅ Impresión exitosa con PowerShell método 1');
+        return true;
+        
+    } catch (error1) {
+        console.log('⚠️ Método 1 falló:', error1.message);
+        
+        // Método 2: Usar comando CMD con MSPAINT (alternativo)
+        try {
+            console.log('💻 Método 2: Intentando con Paint...');
+            
+            // Intentar con configuración sin bordes primero
+            const paintCommand = `mspaint /pt "${filepath}"`;
+            console.log('💻 Ejecutando comando Paint:', paintCommand);
+            
+            await execAsync(paintCommand);
+            console.log('✅ Impresión iniciada con Paint');
+            return true;
+            
+        } catch (error2) {
+            console.log('⚠️ Método 2 falló:', error2.message);
+            
+            // Método 3: PowerShell simple con Start-Process
+            try {
+                console.log('💻 Método 3: PowerShell Start-Process...');
+                
+                const psCommand3 = `powershell -Command "Start-Process -FilePath '${filepath}' -Verb Print -WindowStyle Hidden -Wait"`;
+                
+                await execAsync(psCommand3, { timeout: 10000 });
+                console.log('✅ Impresión iniciada con PowerShell método 3');
+                return true;
+                
+            } catch (error3) {
+                console.log('⚠️ Método 3 falló:', error3.message);
+                
+                // Método 4: PowerShell con configuración avanzada sin bordes
+                try {
+                    console.log('💻 Método 4: PowerShell configuración sin bordes...');
+                    
+                    const psCommand4 = `powershell -Command "& {Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile('${filepath}'); $pd = New-Object System.Drawing.Printing.PrintDocument; $printers = Get-WmiObject -Class Win32_Printer | Where-Object {$_.Default -eq $true}; $pd.PrinterSettings.PrinterName = $printers.Name; $pd.DefaultPageSettings.Margins = New-Object System.Drawing.Printing.Margins(0,0,0,0); $pd.DefaultPageSettings.PrinterSettings.DefaultPageSettings.Landscape = $false; $pd.add_PrintPage({param($sender, $e) $pageWidth = $e.PageBounds.Width; $pageHeight = $e.PageBounds.Height; $imgWidth = $img.Width; $imgHeight = $img.Height; $scale = [Math]::Min($pageWidth / $imgWidth, $pageHeight / $imgHeight); $newWidth = $imgWidth * $scale; $newHeight = $imgHeight * $scale; $x = ($pageWidth - $newWidth) / 2; $y = ($pageHeight - $newHeight) / 2; $destRect = New-Object System.Drawing.Rectangle($x, $y, $newWidth, $newHeight); $e.Graphics.DrawImage($img, $destRect)}); $pd.Print(); $img.Dispose()}"`;
+                    
+                    await execAsync(psCommand4, { timeout: 15000 });
+                    console.log('✅ Impresión exitosa con PowerShell método 4 (sin bordes)');
+                    return true;
+                    
+                } catch (error4) {
+                    console.error('❌ Todos los métodos de impresión fallaron');
+                    console.error('Error método 1:', error1.message);
+                    console.error('Error método 2:', error2.message);
+                    console.error('Error método 3:', error3.message);
+                    console.error('Error método 4:', error4.message);
+                    return false;
+                }
+            }
+        }
+    }
 }
 
 // Función para descargar imagen desde URL
@@ -124,14 +196,28 @@ app.post('/api/save-image', async (req, res) => {
             console.log('📊 Tamaño del archivo:', stats.size, 'bytes');
             console.log('📍 Ubicación completa:', filepath);
             
-            res.json({
+            // Intentar imprimir la imagen silenciosamente
+            console.log('🖨️ Iniciando proceso de impresión automática...');
+            const printSuccess = await printImageSilently(filepath);
+            
+            const responseData = {
                 success: true,
                 message: 'Imagen guardada exitosamente',
                 filename: filename,
                 path: filepath,
                 size: stats.size,
-                timestamp: new Date().toISOString()
-            });
+                timestamp: new Date().toISOString(),
+                printed: printSuccess,
+                printMessage: printSuccess ? 'Imagen enviada a impresora' : 'Error al imprimir - imagen guardada exitosamente'
+            };
+            
+            if (printSuccess) {
+                console.log('✅ IMAGEN GUARDADA Y ENVIADA A IMPRESORA');
+            } else {
+                console.log('⚠️ IMAGEN GUARDADA PERO ERROR AL IMPRIMIR');
+            }
+            
+            res.json(responseData);
         } else {
             throw new Error('El archivo no se pudo verificar después de guardarlo');
         }
