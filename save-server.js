@@ -20,7 +20,7 @@ app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 // Crear carpeta de destino
-const SAVE_PATH = 'D:\\FotoEvento';
+const SAVE_PATH = 'C:\\Autoprinter';
 console.log('📁 Verificando carpeta de destino:', SAVE_PATH);
 
 if (!fs.existsSync(SAVE_PATH)) {
@@ -94,6 +94,15 @@ app.post('/api/save-image', async (req, res) => {
             const base64Data = imageUrl.replace(/^data:image\/\w+;base64,/, '');
             buffer = Buffer.from(base64Data, 'base64');
             console.log('✅ Imagen convertida, tamaño:', buffer.length, 'bytes');
+            
+        } else if (imageUrl.startsWith('/comfy/')) {
+            // URL relativa de ComfyUI - convertir a URL completa y remover el proxy
+            const urlWithoutProxy = imageUrl.replace('/comfy', '');
+            const fullUrl = `http://localhost:8188${urlWithoutProxy}`;
+            console.log('🔗 Convirtiendo URL relativa de ComfyUI:', imageUrl);
+            console.log('🔗 URL final:', fullUrl);
+            buffer = await downloadImage(fullUrl);
+            console.log('✅ Imagen descargada desde ComfyUI, tamaño:', buffer.length, 'bytes');
             
         } else {
             throw new Error('Formato de imagen no soportado');

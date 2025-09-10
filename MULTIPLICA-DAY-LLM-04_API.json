@@ -483,7 +483,7 @@
   },
   "962": {
     "inputs": {
-      "image_path": "M:\\EXPLOZION\\Multiplica_day\\DESARROLLO\\MEDIA\\GFX\\Marco_rfe_no final.png",
+      "image_path": "D:\\webgalicia\\public\\assets\\MARCO_FINAL-13x18.png",
       "RGBA": "false",
       "filename_text_extension": "true"
     },
@@ -551,7 +551,7 @@
   },
   "984": {
     "inputs": {
-      "path": "M:\\EXPLOZION\\Multiplica_day\\DESARROLLO\\MEDIA\\GFX\\Marco-13x18.png"
+      "path": "D:\\webgalicia\\public\\assets\\MARCO_FINAL-13x18.png"
     },
     "class_type": "JWImageLoadRGBA",
     "_meta": {

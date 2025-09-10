@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ====== CUSTOM FONTS ====== */
+@font-face {
+  font-family: 'Figtree';
+  src: url('/assets/fonts/Figtree-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  src: url('/assets/fonts/Figtree-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ====== BASE ====== */
 
 /* RESET mínimo */
@@ -14,7 +31,7 @@ html, body {
   padding: 0;
   background: #F4EEEC;       /* seguridad extra */
   overflow-x: hidden;        /* evita scroll horizontal */
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
@@ -297,7 +314,7 @@ html, body {
 
 .welcome-title {
   @apply text-6xl font-bold text-brand-ink mb-4;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
 .welcome-subtitle-container {
@@ -609,7 +626,7 @@ html, body {
   font-weight: 800;
   color: #1E1E1E;
   margin-bottom: 1rem;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   letter-spacing: -0.03em;
   line-height: 1.1;
 }
@@ -619,7 +636,7 @@ html, body {
   font-weight: 700;
   color: #5D4AA0;
   margin-bottom: 0.5rem;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   letter-spacing: -0.02em;
   position: relative;
   display: inline-block;
@@ -640,7 +657,7 @@ html, body {
 .welcome-description-responsive {
   font-size: 1.5rem;
   color: rgba(30, 30, 30, 0.8);
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   font-weight: 500;
   margin-bottom: 1.5rem;
 }
@@ -669,7 +686,7 @@ html, body {
 .welcome-text-responsive {
   font-size: 1.25rem;
   color: rgba(30, 30, 30, 0.9);
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   line-height: 1.6;
   margin-bottom: 1.5rem;
   font-weight: 400;
@@ -683,7 +700,7 @@ html, body {
   font-size: 1.2rem;
   font-weight: 600;
   color: #5D4AA0;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -702,7 +719,7 @@ html, body {
   color: white;
   font-size: 1.3rem;
   font-weight: 700;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 10px 30px rgba(93, 74, 160, 0.4), 0 4px 15px rgba(93, 74, 160, 0.2);
@@ -745,7 +762,7 @@ html, body {
   font-weight: 700;
   color: #1E1E1E;
   margin-bottom: 0.5rem;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
@@ -753,7 +770,7 @@ html, body {
 .input-subtitle-responsive {
   font-size: 1.25rem;
   color: rgba(30, 30, 30, 0.7);
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   font-weight: 400;
 }
 
@@ -779,7 +796,7 @@ html, body {
 .prompt-instructions-responsive p {
   font-size: 1.1rem;
   color: rgba(30, 30, 30, 0.8);
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   line-height: 1.6;
   font-weight: 400;
 }
@@ -797,7 +814,7 @@ html, body {
   border: 2px solid rgba(93, 74, 160, 0.2);
   background-color: rgba(255, 255, 255, 0.95);
   font-size: 1.1rem;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   line-height: 1.5;
   resize: none;
   outline: none;
@@ -896,7 +913,7 @@ html, body {
   font-size: 1.3rem;
   font-weight: 700;
   color: white;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -945,7 +962,7 @@ html, body {
   font-size: 1.1rem;
   font-weight: 600;
   color: #4c1d95;
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Figtree", "Inter", "Segoe UI", system-ui, sans-serif;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);

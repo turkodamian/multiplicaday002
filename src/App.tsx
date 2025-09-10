@@ -91,7 +91,7 @@ const VirtualKeyboard: React.FC<{
                   fontSize: '1.2rem',
                   fontWeight: '600',
                   color: '#333',
-                  fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                  fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                   cursor: 'pointer',
                   boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
                   userSelect: 'none',
@@ -135,7 +135,7 @@ const VirtualKeyboard: React.FC<{
               fontSize: '1.2rem',
               fontWeight: '600',
               color: '#333',
-              fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+              fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
               cursor: 'pointer',
               boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
               userSelect: 'none',
@@ -170,7 +170,7 @@ const VirtualKeyboard: React.FC<{
               fontSize: '1.2rem',
               fontWeight: '600',
               color: 'white',
-              fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+              fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
               cursor: 'pointer',
               boxShadow: '0 2px 6px rgba(239, 68, 68, 0.2)',
               userSelect: 'none',
@@ -269,6 +269,8 @@ const App: React.FC = () => {
   const [cursorPosition, setCursorPosition] = useState(0);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState("Generando tu imagen inspiradora");
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [printingProgress, setPrintingProgress] = useState(0);
 
   // Simular carga inicial de la app
   useEffect(() => {
@@ -278,6 +280,7 @@ const App: React.FC = () => {
     
     return () => clearTimeout(timer);
   }, []);
+
 
   const avatars: Avatar[] = useMemo(
     () => [
@@ -546,90 +549,58 @@ const App: React.FC = () => {
     }
   }
 
-  function printImage() {
+  async function printImage() {
     if (!finalImageUrl) return;
     setStep("printing");
     setIsPrinting(true);
     setPrintingProgress(0);
     
-    // Simular proceso de impresión realista con progreso
-    const printingSteps = [
-      { message: "Preparando imagen para impresión...", duration: 800 },
-      { message: "Enviando a impresora...", duration: 1200 },
-      { message: "Imprimiendo tu postal...", duration: 2000 },
-      { message: "Finalizando impresión...", duration: 600 },
-      { message: "¡Impresión completada!", duration: 1000 }
-    ];
-    
-    let currentStep = 0;
-    let totalDuration = 0;
-    const totalTime = printingSteps.reduce((sum, step) => sum + step.duration, 0);
-    
-    const updatePrintingStep = () => {
-      if (currentStep < printingSteps.length) {
-        const step = printingSteps[currentStep];
-        setLoadingMessage(step.message);
+    try {
+      setLoadingMessage("Preparando imagen para guardar...");
+      
+      // Enviar imagen al servidor backend para guardar automáticamente
+      console.log('📤 Enviando imagen al servidor para guardar en C:\\Autoprinter');
+      
+      const response = await fetch('http://localhost:3002/api/save-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageUrl: finalImageUrl
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log('✅ Imagen guardada exitosamente:', result.path);
+        setLoadingMessage("¡Imagen guardada exitosamente!");
         
-        // Simular subida de imagen a carpeta de impresión
-        if (currentStep === 1) {
-          // Aquí se simula subir la imagen a la carpeta de impresión
-          console.log('📤 Simulando subida de imagen a carpeta de impresión:', finalImageUrl);
-        }
-        
+        // Volver al inicio directamente después de un breve delay
         setTimeout(() => {
-          totalDuration += step.duration;
-          setPrintingProgress(Math.round((totalDuration / totalTime) * 100));
-          currentStep++;
-          
-          if (currentStep < printingSteps.length) {
-            updatePrintingStep();
-          } else {
-            // Impresión completada, mostrar ventana de impresión
-            setLoadingMessage("¡Postal lista! Abriendo ventana de impresión...");
-            
-            setTimeout(() => {
-              // Simular envío a carpeta de impresión
-              console.log('📁 Imagen guardada en carpeta de impresión exitosamente');
-              console.log('🗺️ Ruta simulada: /print-queue/' + Date.now() + '.jpg');
-              
-              const w = window.open("", "_blank");
-              if (w) {
-                w.document.write(`
-                  <div style="text-align: center; font-family: Arial, sans-serif; padding: 20px;">
-                    <h2 style="color: #5D4AA0; margin-bottom: 20px;">🎆 ¡Tu Postal Inspiradora!</h2>
-                    <img src="${finalImageUrl}" 
-                         style="max-width: 90%; max-height: 80vh; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);" 
-                         onload="setTimeout(() => window.print(), 500);" />
-                    <p style="margin-top: 20px; color: #666; font-style: italic;">
-                      Una experiencia única del Programa de Becas Galicia
-                    </p>
-                  </div>
-                `);
-                w.document.close();
-              }
-              
-              // Mostrar mensaje de finalización
-              setLoadingMessage("¡Gracias por participar! 🙏");
-              
-              // Countdown para reiniciar
-              let countdown = 5;
-              const countdownInterval = setInterval(() => {
-                countdown--;
-                setLoadingMessage(`¡Gracias por participar! 🙏\nReiniciando en ${countdown} segundos...`);
-                
-                if (countdown <= 0) {
-                  clearInterval(countdownInterval);
-                  resetExperience();
-                }
-              }, 1000);
-              
-            }, 1000);
-          }
-        }, step.duration);
+          resetExperience();
+        }, 2000);
+        
+      } else {
+        throw new Error(result.error || 'Error desconocido del servidor');
       }
-    };
-    
-    updatePrintingStep();
+      
+    } catch (error) {
+      console.error('❌ Error guardando imagen:', error);
+      
+      // Si el servidor no está disponible, mostrar mensaje específico
+      if (error.message.includes('fetch')) {
+        setLoadingMessage("Servidor de guardado no disponible.\nVerifica que esté ejecutándose en puerto 3002");
+      } else {
+        setLoadingMessage(`Error: ${error.message}`);
+      }
+      
+      setTimeout(() => {
+        setStep("result");
+        setIsPrinting(false);
+      }, 3000);
+    }
   }
   
   function resetExperience() {
@@ -919,7 +890,7 @@ const App: React.FC = () => {
                       fontWeight: '900',
                       color: 'white',
                       margin: '0',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                      fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                       letterSpacing: '-0.03em',
                       lineHeight: '1.1',
                       textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
@@ -947,7 +918,7 @@ const App: React.FC = () => {
                     color: 'white',
                     fontSize: '1.4rem',
                     fontWeight: '800',
-                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                    fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                     cursor: 'pointer',
                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     boxShadow: `
@@ -1013,7 +984,7 @@ const App: React.FC = () => {
                       fontSize: window.innerWidth < 768 ? '1.4rem' : '1.8rem',
                       fontWeight: '800',
                       color: 'white',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                      fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                       letterSpacing: '0.02em',
                       textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
                     }}>
@@ -1081,7 +1052,7 @@ const App: React.FC = () => {
                   src="/logomultiplicaday.png" 
                   alt="Multiplica Day"
                   style={{
-                    height: '80px',
+                    height: '120px',
                     width: 'auto',
                     filter: 'brightness(0) invert(1) drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3))'
                   }}
@@ -1095,24 +1066,28 @@ const App: React.FC = () => {
                   borderRadius: '16px',
                   padding: '1.25rem',
                   border: `1px solid ${GALICIA_COLORS.primary.violeta2}`,
-                  boxShadow: '0 8px 30px rgba(149, 141, 196, 0.15)'
+                  boxShadow: '0 8px 30px rgba(149, 141, 196, 0.15)',
+                  maxWidth: '750px',
+                  margin: '0 auto'
                 }}>
                   <h3 style={{
-                    fontSize: '1.3rem',
+                    fontSize: '1.6rem',
                     fontWeight: '800',
                     color: `${GALICIA_COLORS.primary.violeta1}`,
                     margin: '0 0 0.5rem 0',
-                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
-                    lineHeight: '1.3'
+                    fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
+                    lineHeight: '1.4'
                   }}>
-                    Imaginate acompañando a un joven de <em>Potenciamos Tu Talento</em> en su camino de crecimiento.
+                    <span style={{ 
+                      fontWeight: '900'
+                    }}>Imaginate</span> acompañando a un joven de <em>Potenciamos Tu Talento</em> en su camino de crecimiento.
                   </h3>
                   <p style={{
                     fontSize: '1rem',
                     fontWeight: '400',
                     color: `${GALICIA_COLORS.primary.violeta1}`,
                     margin: '0.25rem 0',
-                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                    fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                     lineHeight: '1.5'
                   }}>
                     Escribí una frase breve que capture un momento especial de esa experiencia de mentoría.
@@ -1122,7 +1097,7 @@ const App: React.FC = () => {
                     fontWeight: '400',
                     color: `${GALICIA_COLORS.primary.violeta2}`,
                     margin: '0.25rem 0 0 0',
-                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                    fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                     fontStyle: 'italic',
                     lineHeight: '1.4'
                   }}>
@@ -1155,7 +1130,7 @@ const App: React.FC = () => {
                       outline: 'none',
                       background: 'transparent',
                       fontSize: '1rem',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                      fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                       lineHeight: '1.4',
                       resize: 'none',
                       caretColor: '#5D4AA0',
@@ -1190,7 +1165,7 @@ const App: React.FC = () => {
                     fontWeight: '600',
                     color: 'rgba(255, 255, 255, 0.95)',
                     margin: '0',
-                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                    fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                     textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
                   }}>
                     Seleccioná tu perfil
@@ -1222,8 +1197,8 @@ const App: React.FC = () => {
                         cursor: 'pointer',
                         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                         flex: '0 0 auto',
-                        width: '130px',
-                        height: '130px',
+                        width: '150px',
+                        height: '150px',
                         boxShadow: selectedAvatar === a.id 
                           ? `
                             0 15px 40px rgba(93, 74, 160, 0.3),
@@ -1237,20 +1212,6 @@ const App: React.FC = () => {
                         position: 'relative',
                         overflow: 'hidden',
                         animation: `fadeInUp 0.6s ease-out ${0.6 + index * 0.1}s both`
-                      }}
-                      onMouseEnter={(e) => {
-                        if (selectedAvatar !== a.id) {
-                          const target = e.target as HTMLButtonElement;
-                          target.style.transform = 'translateY(-1px) scale(1.01)';
-                          target.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.12)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (selectedAvatar !== a.id) {
-                          const target = e.target as HTMLButtonElement;
-                          target.style.transform = 'translateY(0) scale(1)';
-                          target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
-                        }
                       }}
                     >
                       {/* Brillo de selección */}
@@ -1269,8 +1230,8 @@ const App: React.FC = () => {
                       
                       <div style={{ position: 'relative', zIndex: 1 }}>
                         <div style={{
-                          width: '90px',
-                          height: '90px',
+                          width: '110px',
+                          height: '110px',
                           borderRadius: '50%',
                           overflow: 'hidden',
                           margin: '0 auto',
@@ -1339,7 +1300,7 @@ const App: React.FC = () => {
                     color: (!prompt.trim() || !selectedAvatar) ? 'rgba(255, 255, 255, 0.6)' : 'white',
                     fontSize: '1.4rem',
                     fontWeight: '800',
-                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                    fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                     cursor: (!prompt.trim() || !selectedAvatar) ? 'not-allowed' : 'pointer',
                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     boxShadow: (!prompt.trim() || !selectedAvatar) 
@@ -1403,7 +1364,7 @@ const App: React.FC = () => {
 
             {/* Logo Galicia al final - ahora como parte normal del layout */}
             <div style={{
-              padding: '1rem 0 0 0',
+              padding: '1rem 0 1.5rem 0',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
@@ -1413,7 +1374,7 @@ const App: React.FC = () => {
                 src="/AVATAR_GALICIA.png" 
                 alt="Galicia"
                 style={{
-                  height: '100px',
+                  height: '120px',
                   width: 'auto',
                   filter: 'brightness(0) invert(1)',
                   opacity: 0.9
@@ -1454,7 +1415,7 @@ const App: React.FC = () => {
                   color: 'white',
                   fontSize: '1.3rem',
                   fontWeight: '700',
-                  fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                  fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                   cursor: 'default',
                   boxShadow: '0 8px 25px rgba(0, 0, 0, 0.2)',
                   animation: 'pulse 2s ease-in-out infinite',
@@ -1514,7 +1475,7 @@ const App: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: `${GALICIA_COLORS.neutral.white1}`,
+            background: 'white',
             padding: window.innerWidth < 768 ? '1rem 1rem 2rem 1rem' : '1rem 2rem',
             boxSizing: 'border-box',
             overflow: window.innerWidth < 768 ? 'visible' : 'hidden'
@@ -1532,41 +1493,41 @@ const App: React.FC = () => {
               gap: window.innerWidth < 768 ? '1rem' : '0'
             }}>
               
-              {/* Sección superior: Logo y mensaje */}
+              {/* Sección superior: Solo el mensaje */}
               <div style={{ flex: 'none' }}>
+                {/* Componente "Este momento se puede volver realidad" + "Sumate a Desarrollar Talento" */}
                 <div style={{
                   textAlign: 'center',
-                  marginBottom: window.innerWidth < 768 ? '0.25rem' : '0.75rem'
+                  marginBottom: '1.5rem',
+                  maxWidth: '500px',
+                  margin: '4rem auto 1.5rem auto'
                 }}>
-                  <img 
-                    src="/logomultiplicaday.png" 
-                    alt="Multiplica Day"
-                    style={{
-                      maxWidth: isSmallScreen ? '60px' : (window.innerWidth < 768 ? '80px' : '140px'),
-                      height: 'auto'
-                    }}
-                  />
-                </div>
-
-                <div style={{
-                  marginBottom: window.innerWidth < 768 ? '0.5rem' : '1rem'
-                }}>
-                  <p style={{
-                    fontSize: window.innerWidth < 768 ? '0.75rem' : '1rem',
-                    color: 'white',
-                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
-                    fontWeight: '600',
-                    textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+                  <div style={{
                     background: `${GALICIA_COLORS.primary.violeta1}`,
-                    padding: window.innerWidth < 768 ? '0.3rem 0.6rem' : '0.4rem 0.8rem',
-                    borderRadius: window.innerWidth < 768 ? '12px' : '16px',
-                    margin: '0 auto',
-                    display: 'inline-block',
-                    backdropFilter: 'blur(3px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                    borderRadius: '10px',
+                    padding: '1rem',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 6px 15px rgba(93, 74, 160, 0.3)'
                   }}>
-                    Este momento se puede volver realidad
-                  </p>
+                    <h2 style={{
+                      fontSize: '1.4rem',
+                      fontWeight: '800',
+                      color: 'white',
+                      margin: '0 0 0.1rem 0',
+                      fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
+                      lineHeight: '1.3'
+                    }}>
+                      Este momento se puede volver realidad
+                    </h2>
+                    <span style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255, 255, 255, 0.85)',
+                      fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
+                      fontWeight: '400'
+                    }}>
+                      Sumate a Desarrollar Talento
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -1574,10 +1535,11 @@ const App: React.FC = () => {
               <div style={{ 
                 flex: '1',
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 justifyContent: 'center',
                 minHeight: 0,
-                maxHeight: window.innerWidth < 768 ? '400px' : '65%'
+                maxHeight: '65%',
+                paddingTop: '4rem'
               }}>
                 {finalImageUrl ? (
                   <div style={{
@@ -1612,55 +1574,27 @@ const App: React.FC = () => {
                     color: 'white',
                     textAlign: 'center',
                     padding: '2rem',
-                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif'
+                    fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif'
                   }}>
                     ✨ Generando tu imagen personalizada...
                   </div>
                 )}
               </div>
 
-              {/* Sección inferior: Mensaje final y botones */}
-              <div style={{ flex: 'none' }}>
-                <div style={{
-                  textAlign: 'center',
-                  marginBottom: window.innerWidth < 768 ? '0.5rem' : '1.25rem',
-                  maxWidth: window.innerWidth < 768 ? '95%' : '500px',
-                  margin: window.innerWidth < 768 ? '0 auto 0.5rem auto' : '0 auto 1rem auto'
-                }}>
-                  <div style={{
-                    background: `${GALICIA_COLORS.primary.violeta1}`,
-                    borderRadius: window.innerWidth < 768 ? '8px' : '10px',
-                    padding: window.innerWidth < 768 ? '0.5rem' : '1rem',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    boxShadow: '0 6px 15px rgba(93, 74, 160, 0.3)'
-                  }}>
-                    <h2 style={{
-                      fontSize: window.innerWidth < 768 ? '0.8rem' : '1.1rem',
-                      fontWeight: '600',
-                      color: 'white',
-                      margin: '0 0 0.1rem 0',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
-                      lineHeight: '1.2'
-                    }}>
-                      Este momento se puede volver realidad
-                    </h2>
-                    <span style={{
-                      fontSize: window.innerWidth < 768 ? '0.7rem' : '0.9rem',
-                      color: 'rgba(255, 255, 255, 0.85)',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif'
-                    }}>
-                      Sumate a Desarrollar Talento
-                    </span>
-                  </div>
-                </div>
-
+              {/* Sección inferior: Botones de acción debajo de la imagen */}
+              <div style={{ 
+                flex: 'none',
+                marginTop: '0.5rem',
+                marginBottom: '2rem',
+                zIndex: 10
+              }}>
                 {/* Botones de acción */}
                 {finalImageUrl && (
                   <div style={{ 
                     textAlign: 'center',
                     display: 'flex',
-                    flexDirection: window.innerWidth < 768 ? 'column' : 'row',
-                    gap: window.innerWidth < 768 ? '0.75rem' : '1.5rem',
+                    flexDirection: 'row',
+                    gap: '1.5rem',
                     justifyContent: 'center',
                     alignItems: 'center'
                   }}>
@@ -1668,19 +1602,17 @@ const App: React.FC = () => {
                   <button
                     onClick={() => setStep("input")}
                     style={{
-                      padding: window.innerWidth < 768 ? '12px 24px' : '18px 36px',
+                      padding: '18px 36px',
                       borderRadius: '50px',
                       background: 'transparent',
                       border: `2px solid ${GALICIA_COLORS.primary.violeta1}`,
                       color: `${GALICIA_COLORS.primary.violeta1}`,
-                      fontSize: window.innerWidth < 768 ? '0.9rem' : '1.2rem',
+                      fontSize: '1.2rem',
                       fontWeight: '600',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                      fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                       cursor: 'pointer',
                       boxShadow: '0 4px 15px rgba(93, 74, 160, 0.2)',
-                      transition: 'all 0.3s ease',
-                      width: window.innerWidth < 768 ? '100%' : 'auto',
-                      maxWidth: window.innerWidth < 768 ? '200px' : 'none'
+                      transition: 'all 0.3s ease'
                     }}
                     onMouseEnter={(e) => {
                       const target = e.target as HTMLButtonElement;
@@ -1704,19 +1636,17 @@ const App: React.FC = () => {
                   <button
                     onClick={printImage}
                     style={{
-                      padding: window.innerWidth < 768 ? '14px 28px' : '20px 40px',
+                      padding: '20px 40px',
                       borderRadius: '50px',
                       background: `${GALICIA_COLORS.primary.violeta1}`,
                       border: '2px solid rgba(255, 255, 255, 0.2)',
                       color: 'white',
-                      fontSize: window.innerWidth < 768 ? '1rem' : '1.3rem',
+                      fontSize: '1.3rem',
                       fontWeight: '700',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                      fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
                       cursor: 'pointer',
                       boxShadow: '0 8px 25px rgba(93, 74, 160, 0.4)',
-                      transition: 'all 0.3s ease',
-                      width: window.innerWidth < 768 ? '100%' : 'auto',
-                      maxWidth: window.innerWidth < 768 ? '200px' : 'none'
+                      transition: 'all 0.3s ease'
                     }}
                     onMouseEnter={(e) => {
                       const target = e.target as HTMLButtonElement;
@@ -1747,7 +1677,7 @@ const App: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: `${GALICIA_COLORS.primary.violeta1}`,
             position: 'relative',
             overflow: 'hidden'
           }}>
@@ -1769,103 +1699,61 @@ const App: React.FC = () => {
             <div style={{
               textAlign: 'center',
               color: 'white',
-              maxWidth: window.innerWidth < 768 ? '90vw' : '500px',
-              position: 'relative'
+              maxWidth: '500px',
+              position: 'relative',
+              height: '100vh',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
             }}>
               
-              {/* Icono de impresión animado */}
-              <div style={{
-                marginBottom: window.innerWidth < 768 ? '2rem' : '3rem',
-                position: 'relative',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}>
-                <div style={{
-                  width: window.innerWidth < 768 ? '100px' : '120px',
-                  height: window.innerWidth < 768 ? '100px' : '120px',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                  animation: 'pulse 2s ease-in-out infinite',
-                  backdropFilter: 'blur(3px)',
-                  border: '2px solid rgba(255, 255, 255, 0.3)'
-                }}>
-                  <span style={{
-                    fontSize: window.innerWidth < 768 ? '3rem' : '4rem',
-                    zIndex: 2
-                  }}>🖨️</span>
-                  
-                  {/* Ondas de impresión */}
-                  {[0, 1, 2].map((i) => (
-                    <div 
-                      key={i}
-                      style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        width: '100%',
-                        height: '100%',
-                        border: '2px solid rgba(255, 255, 255, 0.3)',
-                        borderRadius: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        animation: `wave 2s ease-out infinite ${i * 0.7}s`
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-              
+              {/* Título principal */}
               <h2 style={{
-                fontSize: window.innerWidth < 768 ? '1.5rem' : '2rem',
-                marginBottom: '1rem',
-                fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
-                fontWeight: '700'
+                fontSize: '2.5rem',
+                marginBottom: '1.5rem',
+                fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
+                fontWeight: '800'
               }}>
-                Imprimiendo tu postal personalizada
+                Imprimiendo tu postal
               </h2>
               
+              {/* Mensaje de agradecimiento */}
               <p style={{
-                fontSize: window.innerWidth < 768 ? '1rem' : '1.2rem',
-                marginBottom: '2rem',
-                opacity: 0.9,
-                fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
-                padding: window.innerWidth < 768 ? '1rem 1.5rem' : '1.5rem 2rem',
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                backdropFilter: 'blur(5px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+                fontSize: '2.2rem',
+                marginBottom: '4rem',
+                fontFamily: '"Figtree", "Inter", "Segoe UI", system-ui, sans-serif',
+                fontWeight: '700',
+                textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                lineHeight: '1.4'
               }}>
-                Tu postal personalizada se está imprimiendo...
+                ¡<span style={{ 
+                  fontWeight: '900'
+                }}>Gracias por participar</span> de la experiencia!
               </p>
 
-              {/* Indicador de progreso de impresión */}
+              {/* Logo Galicia abajo */}
               <div style={{
-                marginTop: '2rem',
-                display: 'flex',
-                justifyContent: 'center',
-                gap: '0.5rem'
+                position: 'absolute',
+                bottom: '8rem',
+                left: '50%',
+                transform: 'translateX(-50%)'
               }}>
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    style={{
-                      width: '10px',
-                      height: '10px',
-                      background: 'rgba(255, 255, 255, 0.6)',
-                      borderRadius: '50%',
-                      animation: `pulse 1.5s ease-in-out infinite ${i * 0.3}s`
-                    }}
-                  />
-                ))}
+                <img 
+                  src="/AVATAR_GALICIA.png" 
+                  alt="Galicia"
+                  style={{
+                    height: '120px',
+                    width: 'auto',
+                    filter: 'brightness(0) invert(1)',
+                    opacity: 0.9
+                  }}
+                />
               </div>
             </div>
           </section>
         )}
+
       </>
     );
   }
