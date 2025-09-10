@@ -44,7 +44,7 @@ const VirtualKeyboard: React.FC<{
   onBackspace: () => void;
   onSpace: () => void;
   onClose: () => void;
-}> = ({ onKeyPress, onBackspace, onSpace, onClose }) => {
+}> = ({ onKeyPress, onBackspace, onSpace }) => {
   const keys = [
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
     ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ñ'],
@@ -57,10 +57,10 @@ const VirtualKeyboard: React.FC<{
     <div style={{
       background: 'rgba(255, 255, 255, 0.95)',
       borderRadius: '16px',
-      padding: window.innerWidth < 768 ? '0.75rem' : '1rem',
+      padding: '1rem',
       boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
       border: '2px solid rgba(93, 74, 160, 0.15)',
-      maxWidth: window.innerWidth < 768 ? '95vw' : '600px',
+      maxWidth: '600px',
       width: '100%',
       margin: '0 auto'
     }}>
@@ -68,7 +68,7 @@ const VirtualKeyboard: React.FC<{
       <div style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: window.innerWidth < 768 ? '0.2rem' : '0.3rem'
+        gap: '0.3rem'
       }}>
         {keys.map((row, rowIndex) => (
           <div key={rowIndex} style={{
@@ -82,13 +82,13 @@ const VirtualKeyboard: React.FC<{
                 key={key}
                 onClick={() => onKeyPress(key)}
                 style={{
-                  minWidth: window.innerWidth < 768 ? '32px' : '42px',
-                  height: window.innerWidth < 768 ? '36px' : '44px',
-                  padding: window.innerWidth < 768 ? '0.3rem 0.4rem' : '0.4rem 0.6rem',
+                  minWidth: '42px',
+                  height: '44px',
+                  padding: '0.4rem 0.6rem',
                   background: 'white',
                   border: '1.5px solid rgba(93, 74, 160, 0.2)',
                   borderRadius: '8px',
-                  fontSize: window.innerWidth < 768 ? '1rem' : '1.2rem',
+                  fontSize: '1.2rem',
                   fontWeight: '600',
                   color: '#333',
                   fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
@@ -127,12 +127,12 @@ const VirtualKeyboard: React.FC<{
             onClick={onSpace}
             style={{
               flex: '1',
-              height: window.innerWidth < 768 ? '36px' : '44px',
+              height: '44px',
               padding: '0.3rem 1rem',
               background: 'white',
               border: '1.5px solid rgba(93, 74, 160, 0.2)',
               borderRadius: '8px',
-              fontSize: window.innerWidth < 768 ? '1rem' : '1.2rem',
+              fontSize: '1.2rem',
               fontWeight: '600',
               color: '#333',
               fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
@@ -161,13 +161,13 @@ const VirtualKeyboard: React.FC<{
           <button
             onClick={onBackspace}
             style={{
-              minWidth: window.innerWidth < 768 ? '80px' : '100px',
-              height: window.innerWidth < 768 ? '36px' : '44px',
+              minWidth: '100px',
+              height: '44px',
               padding: '0.3rem 0.6rem',
               background: 'rgba(239, 68, 68, 0.9)',
               border: '1.5px solid rgba(239, 68, 68, 0.3)',
               borderRadius: '8px',
-              fontSize: window.innerWidth < 768 ? '1rem' : '1.2rem',
+              fontSize: '1.2rem',
               fontWeight: '600',
               color: 'white',
               fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
@@ -198,18 +198,6 @@ const VirtualKeyboard: React.FC<{
   );
 };
 
-const PurpleButton: React.FC<
-  React.PropsWithChildren<{ onClick?: () => void; disabled?: boolean }>
-> = ({ children, onClick, disabled }) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    className="btn-pill"
-    style={{ filter: "drop-shadow(0 6px 16px rgba(36, 20, 92, 0.4))" }}
-  >
-    {children}
-  </button>
-);
 
 /** Hook para manejo responsivo inteligente */
 function useResponsiveLayout() {
@@ -278,12 +266,9 @@ const App: React.FC = () => {
   const [prompt, setPrompt] = useState<string>("");
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [finalImageUrl, setFinalImageUrl] = useState<string | null>(null);
-  const [showKeyboard, setShowKeyboard] = useState(true);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState("Generando tu imagen inspiradora");
-  const [isPrinting, setIsPrinting] = useState(false);
-  const [printingProgress, setPrintingProgress] = useState(0);
 
   // Simular carga inicial de la app
   useEffect(() => {
@@ -514,7 +499,7 @@ const App: React.FC = () => {
               }
             }
           }
-        } catch (error) {
+        } catch {
           console.log(`⏳ Verificando estado... (${attempts}/${COMFY_CONFIG.TIMEOUT_ATTEMPTS})`);
           setLoadingMessage(`Procesando... (${attempts}/${COMFY_CONFIG.TIMEOUT_ATTEMPTS})`);
         }
@@ -849,19 +834,19 @@ const App: React.FC = () => {
     </div>
   );
 
-  function renderScreenContent(_layout: any) {
+  function renderScreenContent() {
     return (
       <>
         {step === "welcome" && (
           <section style={{
             width: '100%',
-            minHeight: window.innerWidth < 768 ? '100vh' : '100%',
-            height: window.innerWidth < 768 ? '100vh' : '100%',
+            minHeight: '100vh',
+            height: '100vh',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             background: `${GALICIA_COLORS.primary.violeta1}`,
-            padding: window.innerWidth < 768 ? '2rem 1rem' : '2rem',
+            padding: '2rem',
             boxSizing: 'border-box',
             position: 'relative',
             overflow: 'hidden'
@@ -889,28 +874,28 @@ const App: React.FC = () => {
             }}></div>
             <div style={{ 
               textAlign: 'center', 
-              maxWidth: window.innerWidth < 768 ? '95vw' : '900px', 
+              maxWidth: '900px', 
               width: '100%',
               boxSizing: 'border-box',
               position: 'relative',
               zIndex: 1
             }}>
               <div style={{ 
-                marginBottom: window.innerWidth < 768 ? '1rem' : '2rem',
+                marginBottom: '2rem',
                 animation: 'fadeInUp 1s ease-out'
               }}>
                 
                 {/* Logo Multiplica Day arriba del todo y más grande */}
                 <div style={{
-                  marginBottom: window.innerWidth < 768 ? '4rem' : '5rem',
+                  marginBottom: '5rem',
                   textAlign: 'center',
-                  marginTop: window.innerWidth < 768 ? '-1rem' : '-2rem'
+                  marginTop: '-2rem'
                 }}>
                   <img 
                     src="/logomultiplicaday.png" 
                     alt="Multiplica Day"
                     style={{
-                      height: window.innerWidth < 768 ? '180px' : '240px',
+                      height: '240px',
                       width: 'auto',
                       filter: 'brightness(0) invert(1) drop-shadow(0 6px 30px rgba(0, 0, 0, 0.4))'
                     }}
@@ -930,7 +915,7 @@ const App: React.FC = () => {
                     display: 'inline-block'
                   }}>
                     <h1 style={{
-                      fontSize: window.innerWidth < 768 ? '2.5rem' : '3.5rem',
+                      fontSize: '3.5rem',
                       fontWeight: '900',
                       color: 'white',
                       margin: '0',
@@ -943,20 +928,6 @@ const App: React.FC = () => {
                     }}>
                       Te damos la bienvenida
                     </h1>
-                    
-                    {/* Subrayado violeta debajo del título */}
-                    <div style={{
-                      position: 'absolute',
-                      bottom: '-16px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: '120%',
-                      height: '12px',
-                      background: `${GALICIA_COLORS.primary.violeta2}`,
-                      borderRadius: '6px',
-                      animation: 'shimmer 3s ease-in-out infinite',
-                      boxShadow: '0 4px 20px rgba(93, 74, 160, 0.5)'
-                    }}></div>
                   </div>
                 </div>
                 
@@ -964,17 +935,17 @@ const App: React.FC = () => {
 
               <div style={{
                 animation: 'fadeInUp 1s ease-out 0.6s both',
-                marginTop: window.innerWidth < 768 ? '3rem' : '4rem'
+                marginTop: '4rem'
               }}>
                 <button
                   onClick={() => setStep("input")}
                   style={{
-                    padding: window.innerWidth < 768 ? '18px 36px' : '22px 50px',
+                    padding: '22px 50px',
                     borderRadius: '50px',
                     background: `${GALICIA_COLORS.primary.violeta1}`,
                     border: '2px solid rgba(255, 255, 255, 0.2)',
                     color: 'white',
-                    fontSize: window.innerWidth < 768 ? '1.2rem' : '1.4rem',
+                    fontSize: '1.4rem',
                     fontWeight: '800',
                     fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
                     cursor: 'pointer',
@@ -1048,22 +1019,28 @@ const App: React.FC = () => {
                     }}>
                       Desarrollar Talento
                     </span>
-                    
-                    {/* Subrayado violeta */}
-                    <div style={{
-                      position: 'absolute',
-                      bottom: '-8px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: '120%',
-                      height: '6px',
-                      background: `${GALICIA_COLORS.primary.violeta2}`,
-                      borderRadius: '3px',
-                      animation: 'shimmer 4s ease-in-out infinite 1.5s',
-                      boxShadow: '0 2px 12px rgba(93, 74, 160, 0.5)'
-                    }}></div>
                   </div>
                 </div>
+              </div>
+              
+              {/* Logo Galicia al final - positioned absolute */}
+              <div style={{
+                position: 'absolute',
+                bottom: 'calc(1rem - 440px)',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 1
+              }}>
+                <img 
+                  src="/AVATAR_GALICIA.png" 
+                  alt="Galicia"
+                  style={{
+                    height: '120px',
+                    width: 'auto',
+                    filter: 'brightness(0) invert(1)',
+                    opacity: 0.9
+                  }}
+                />
               </div>
             </div>
           </section>
@@ -1073,116 +1050,111 @@ const App: React.FC = () => {
           <section style={{
             width: '100%',
             minHeight: '100vh',
-            height: window.innerWidth < 768 ? 'auto' : '100vh',
+            height: '100vh',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            background: `${GALICIA_COLORS.primary.violeta2}`,
-            padding: window.innerWidth < 768 ? '1rem 0' : '2rem',
+            justifyContent: 'space-between',
+            background: '#594D8D',
+            padding: '1rem',
             boxSizing: 'border-box',
-            overflow: window.innerWidth < 768 ? 'visible' : 'hidden',
+            overflow: 'hidden',
             position: 'relative'
           }}>
+            {/* Contenido principal distribuido uniformemente */}
             <div style={{ 
-              maxWidth: window.innerWidth < 768 ? '100vw' : '900px', 
+              maxWidth: '1080px', 
               width: '100%',
-              minHeight: window.innerWidth < 768 ? 'auto' : '100%',
+              flex: '1',
               boxSizing: 'border-box',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: window.innerWidth < 768 ? 'flex-start' : 'space-between',
+              justifyContent: 'space-evenly',
               position: 'relative',
               zIndex: 1,
-              padding: window.innerWidth < 768 ? '0.5rem 0 2rem 0' : '2rem 0',
-              gap: window.innerWidth < 768 ? '1rem' : '0'
+              padding: '1rem 0',
+              minHeight: 0
             }}>
-              {/* Sección superior: Logo y título compacto */}
-              <div style={{ flex: 'none' }}>
+              {/* Logo Multiplica Day */}
+              <div style={{ flex: 'none', textAlign: 'center' }}>
+                <img 
+                  src="/logomultiplicaday.png" 
+                  alt="Multiplica Day"
+                  style={{
+                    height: '80px',
+                    width: 'auto',
+                    filter: 'brightness(0) invert(1) drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3))'
+                  }}
+                />
+              </div>
+
+              {/* Cuadro de instrucciones */}
+              <div style={{ flex: 'none', textAlign: 'center', padding: '0 1rem' }}>
                 <div style={{
-                  textAlign: 'center',
-                  marginBottom: window.innerWidth < 768 ? '0.25rem' : '1rem'
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  borderRadius: '16px',
+                  padding: '1.25rem',
+                  border: `1px solid ${GALICIA_COLORS.primary.violeta2}`,
+                  boxShadow: '0 8px 30px rgba(149, 141, 196, 0.15)'
                 }}>
-                  <img 
-                    src="/logomultiplicaday.png" 
-                    alt="Multiplica Day"
-                    style={{
-                      height: window.innerWidth < 768 ? '60px' : '110px',
-                      width: 'auto',
-                      filter: 'brightness(0) invert(1) drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3))'
-                    }}
-                  />
-                </div>
-                
-                <div style={{
-                  textAlign: 'center',
-                  marginBottom: window.innerWidth < 768 ? '0.75rem' : '1.5rem',
-                  padding: window.innerWidth < 768 ? '0 0.75rem' : '0 2rem'
-                }}>
-                  <div style={{
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    borderRadius: window.innerWidth < 768 ? '12px' : '16px',
-                    padding: window.innerWidth < 768 ? '1rem' : '2rem',
-                    border: `1px solid ${GALICIA_COLORS.primary.violeta2}`,
-                    boxShadow: '0 4px 20px rgba(149, 141, 196, 0.1)'
+                  <h3 style={{
+                    fontSize: '1.3rem',
+                    fontWeight: '800',
+                    color: `${GALICIA_COLORS.primary.violeta1}`,
+                    margin: '0 0 0.5rem 0',
+                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                    lineHeight: '1.3'
                   }}>
-                    <h3 style={{
-                      fontSize: window.innerWidth < 768 ? '0.95rem' : '1.4rem',
-                      fontWeight: '700',
-                      color: `${GALICIA_COLORS.primary.violeta1}`,
-                      margin: window.innerWidth < 768 ? '0 0 0.75rem 0' : '0 0 1rem 0',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
-                      lineHeight: '1.4'
-                    }}>
-                      Imaginate acompañando a un joven de Potenciamos Tu Talento en su camino de crecimiento.
-                    </h3>
-                    <p style={{
-                      fontSize: window.innerWidth < 768 ? '0.85rem' : '1.2rem',
-                      fontWeight: '500',
-                      color: `${GALICIA_COLORS.primary.violeta1}`,
-                      margin: window.innerWidth < 768 ? '0.25rem 0' : '0.5rem 0',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
-                      lineHeight: '1.4'
-                    }}>
-                      Escribí una frase breve que capture un momento especial de esa experiencia de mentoría.
-                    </p>
-                    <p style={{
-                      fontSize: window.innerWidth < 768 ? '0.8rem' : '1rem',
-                      fontWeight: '400',
-                      color: `${GALICIA_COLORS.primary.violeta2}`,
-                      margin: window.innerWidth < 768 ? '0.25rem 0 0 0' : '0.5rem 0 0 0',
-                      fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
-                      fontStyle: 'italic'
-                    }}>
-                      Esa frase se transformará en una imagen única
-                    </p>
-                  </div>
+                    Imaginate acompañando a un joven de <em>Potenciamos Tu Talento</em> en su camino de crecimiento.
+                  </h3>
+                  <p style={{
+                    fontSize: '1rem',
+                    fontWeight: '400',
+                    color: `${GALICIA_COLORS.primary.violeta1}`,
+                    margin: '0.25rem 0',
+                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                    lineHeight: '1.5'
+                  }}>
+                    Escribí una frase breve que capture un momento especial de esa experiencia de mentoría.
+                  </p>
+                  <p style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '400',
+                    color: `${GALICIA_COLORS.primary.violeta2}`,
+                    margin: '0.25rem 0 0 0',
+                    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+                    fontStyle: 'italic',
+                    lineHeight: '1.4'
+                  }}>
+                    Esa frase se transformará en una imagen única
+                  </p>
                 </div>
               </div>
 
-              {/* Sección media: Campo de texto compacto */}
-              <div style={{ flex: '0 0 auto', textAlign: 'center', marginBottom: window.innerWidth < 768 ? '0.25rem' : '1rem' }}>
+              {/* Campo de texto */}
+              <div style={{ flex: 'none', textAlign: 'center' }}>
                 <div style={{
                   display: 'inline-block',
                   background: 'rgba(255, 255, 255, 0.9)',
-                  borderRadius: window.innerWidth < 768 ? '12px' : '16px',
-                  padding: window.innerWidth < 768 ? '0.75rem' : '1.5rem',
+                  borderRadius: '16px',
+                  padding: '1rem',
                   boxShadow: '0 8px 25px rgba(93, 74, 160, 0.12)',
                   border: '2px solid rgba(93, 74, 160, 0.15)',
                   width: '100%',
-                  maxWidth: window.innerWidth < 768 ? '100%' : '500px',
+                  maxWidth: '600px',
                   transition: 'all 0.3s ease'
                 }}>
                   <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Tu frase inspiradora sobre mentoría..."
-                    rows={window.innerWidth < 768 ? 2 : 3}
+                    rows={3}
                     style={{
                       width: '100%',
                       border: 'none',
                       outline: 'none',
                       background: 'transparent',
-                      fontSize: window.innerWidth < 768 ? '0.85rem' : '1.1rem',
+                      fontSize: '1rem',
                       fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
                       lineHeight: '1.4',
                       resize: 'none',
@@ -1195,12 +1167,11 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Teclado virtual - ahora en el medio */}
+              {/* Teclado virtual */}
               <div style={{ 
-                flex: '0 0 auto',
+                flex: 'none',
                 display: 'flex',
                 justifyContent: 'center',
-                marginBottom: window.innerWidth < 768 ? '0.5rem' : '1.5rem',
                 width: '100%'
               }}>
                 <VirtualKeyboard
@@ -1211,18 +1182,16 @@ const App: React.FC = () => {
                 />
               </div>
 
-              {/* Sección inferior: Avatars más grandes */}
-              <div style={{ flex: '0 0 auto', textAlign: 'center' }}>
-                <div style={{
-                  marginBottom: window.innerWidth < 768 ? '0.5rem' : '1rem'
-                }}>
+              {/* Selección de avatares */}
+              <div style={{ flex: 'none', textAlign: 'center' }}>
+                <div style={{ marginBottom: '0.75rem' }}>
                   <h3 style={{
-                    fontSize: window.innerWidth < 768 ? '0.9rem' : '1.3rem',
+                    fontSize: '1.1rem',
                     fontWeight: '600',
                     color: 'rgba(255, 255, 255, 0.95)',
                     margin: '0',
                     fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
-                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
                   }}>
                     Seleccioná tu perfil
                   </h3>
@@ -1230,12 +1199,12 @@ const App: React.FC = () => {
                 <div style={{ 
                   display: 'flex', 
                   justifyContent: 'center', 
-                  gap: window.innerWidth < 768 ? '4px' : '12px', 
+                  gap: '16px', 
                   width: '100%', 
-                  maxWidth: window.innerWidth < 768 ? '100%' : '700px',
+                  maxWidth: '900px',
                   margin: '0 auto',
                   flexWrap: 'nowrap',
-                  padding: window.innerWidth < 768 ? '0 1rem' : '0',
+                  padding: '0 1rem',
                   boxSizing: 'border-box',
                   overflowX: 'visible'
                 }}>
@@ -1244,7 +1213,7 @@ const App: React.FC = () => {
                       key={a.id}
                       onClick={() => setSelectedAvatar(a.id)}
                       style={{
-                        padding: window.innerWidth < 768 ? '0.4rem' : '1rem',
+                        padding: '1rem',
                         borderRadius: '50%',
                         backgroundColor: 'transparent',
                         border: selectedAvatar === a.id 
@@ -1253,8 +1222,8 @@ const App: React.FC = () => {
                         cursor: 'pointer',
                         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                         flex: '0 0 auto',
-                        width: window.innerWidth < 768 ? '60px' : '150px',
-                        height: window.innerWidth < 768 ? '60px' : '150px',
+                        width: '130px',
+                        height: '130px',
                         boxShadow: selectedAvatar === a.id 
                           ? `
                             0 15px 40px rgba(93, 74, 160, 0.3),
@@ -1300,8 +1269,8 @@ const App: React.FC = () => {
                       
                       <div style={{ position: 'relative', zIndex: 1 }}>
                         <div style={{
-                          width: window.innerWidth < 768 ? '40px' : '90px',
-                          height: window.innerWidth < 768 ? '40px' : '90px',
+                          width: '90px',
+                          height: '90px',
                           borderRadius: '50%',
                           overflow: 'hidden',
                           margin: '0 auto',
@@ -1349,17 +1318,17 @@ const App: React.FC = () => {
                 </div>
               </div>
 
+              {/* Botón generar */}
               <div style={{ 
+                flex: 'none',
                 textAlign: 'center',
-                animation: 'fadeInUp 0.8s ease-out 0.8s both',
-                marginBottom: window.innerWidth < 768 ? '0.75rem' : '1.5rem',
-                marginTop: window.innerWidth < 768 ? '1rem' : '2rem'
+                animation: 'fadeInUp 0.8s ease-out 0.8s both'
               }}>
                 <button
                   onClick={handleGenerate}
                   disabled={!prompt.trim() || !selectedAvatar}
                   style={{
-                    padding: window.innerWidth < 768 ? '20px 36px' : '24px 48px',
+                    padding: '20px 40px',
                     borderRadius: '50px',
                     background: (!prompt.trim() || !selectedAvatar) 
                       ? 'rgba(255, 255, 255, 0.3)' 
@@ -1368,7 +1337,7 @@ const App: React.FC = () => {
                       ? '2px solid rgba(255, 255, 255, 0.4)'
                       : '2px solid rgba(255, 255, 255, 0.2)',
                     color: (!prompt.trim() || !selectedAvatar) ? 'rgba(255, 255, 255, 0.6)' : 'white',
-                    fontSize: window.innerWidth < 768 ? '1.2rem' : '1.4rem',
+                    fontSize: '1.4rem',
                     fontWeight: '800',
                     fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
                     cursor: (!prompt.trim() || !selectedAvatar) ? 'not-allowed' : 'pointer',
@@ -1381,8 +1350,7 @@ const App: React.FC = () => {
                       `,
                     transform: (!prompt.trim() || !selectedAvatar) ? 'none' : 'translateY(0)',
                     opacity: (!prompt.trim() || !selectedAvatar) ? 0.7 : 1,
-                    width: window.innerWidth < 768 ? '100%' : 'auto',
-                    maxWidth: window.innerWidth < 768 ? '350px' : 'none',
+                    width: 'auto',
                     position: 'relative',
                     overflow: 'hidden',
                     letterSpacing: '0.02em'
@@ -1431,7 +1399,26 @@ const App: React.FC = () => {
                   </span>
                 </button>
               </div>
+            </div>
 
+            {/* Logo Galicia al final - ahora como parte normal del layout */}
+            <div style={{
+              padding: '1rem 0 0 0',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexShrink: 0
+            }}>
+              <img 
+                src="/AVATAR_GALICIA.png" 
+                alt="Galicia"
+                style={{
+                  height: '100px',
+                  width: 'auto',
+                  filter: 'brightness(0) invert(1)',
+                  opacity: 0.9
+                }}
+              />
             </div>
           </section>
         )}
@@ -1439,15 +1426,15 @@ const App: React.FC = () => {
         {step === "loading" && (
           <section style={{
             width: '100%',
-            minHeight: window.innerWidth < 768 ? '100vh' : '100%',
-            height: window.innerWidth < 768 ? '100vh' : '100%',
+            minHeight: '100vh',
+            height: '100vh',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             background: `${GALICIA_COLORS.primary.violeta1}`,
             position: 'relative',
             overflow: 'hidden',
-            padding: window.innerWidth < 768 ? '1rem' : '2rem',
+            padding: '2rem',
             boxSizing: 'border-box'
           }}>
             {/* Botón "Generando imagen..." más arriba */}
@@ -1460,12 +1447,12 @@ const App: React.FC = () => {
             }}>
               <button
                 style={{
-                  padding: window.innerWidth < 768 ? '16px 32px' : '20px 40px',
+                  padding: '20px 40px',
                   borderRadius: '50px',
                   background: `${GALICIA_COLORS.primary.violeta1}`,
                   border: '2px solid rgba(255, 255, 255, 0.3)',
                   color: 'white',
-                  fontSize: window.innerWidth < 768 ? '1.1rem' : '1.3rem',
+                  fontSize: '1.3rem',
                   fontWeight: '700',
                   fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
                   cursor: 'default',
@@ -1474,8 +1461,47 @@ const App: React.FC = () => {
                   backdropFilter: 'blur(10px)'
                 }}
               >
-                Generando imagen...
+                {loadingMessage}
               </button>
+              
+              {/* Barra de progreso */}
+              <div style={{
+                width: '200px',
+                height: '4px',
+                backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                borderRadius: '2px',
+                marginTop: '1rem',
+                overflow: 'hidden',
+                margin: '1rem auto 0 auto'
+              }}>
+                <div style={{
+                  width: `${loadingProgress}%`,
+                  height: '100%',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  borderRadius: '2px',
+                  transition: 'width 0.3s ease'
+                }}></div>
+              </div>
+              
+              {/* Logo Galicia al final - positioned absolute */}
+              <div style={{
+                position: 'absolute',
+                bottom: 'calc(1rem - 640px)',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 1
+              }}>
+                <img 
+                  src="/AVATAR_GALICIA.png" 
+                  alt="Galicia"
+                  style={{
+                    height: '120px',
+                    width: 'auto',
+                    filter: 'brightness(0) invert(1)',
+                    opacity: 0.9
+                  }}
+                />
+              </div>
             </div>
           </section>
         )}
