@@ -347,7 +347,7 @@ const App: React.FC = () => {
       setLoadingProgress(10);
       
       // Cargar el workflow completo y modificar los inputs necesarios
-      const workflowResponse = await fetch('/MULTIPLICA-DAY-LLM-04_API.json');
+      const workflowResponse = await fetch('/MULTIPLICA-DAY-LLM-07_positive_API.json');
       const workflow = await workflowResponse.json();
       
       // Actualizar el prompt del usuario en el nodo LLM (939)
@@ -365,7 +365,7 @@ const App: React.FC = () => {
       }
       
       // Verificar que los nodos críticos estén presentes
-      const criticalNodes = ["939", "866", "619"];
+      const criticalNodes = ["939", "866", "963"];
       const missingNodes = criticalNodes.filter(nodeId => !workflow[nodeId]);
       if (missingNodes.length > 0) {
         throw new Error(`Nodos críticos faltantes en el workflow: ${missingNodes.join(', ')}`);
@@ -456,20 +456,20 @@ const App: React.FC = () => {
                 console.log('📄 Outputs recibidos:', Object.keys(outputs));
                 console.log('📄 Outputs completos:', JSON.stringify(outputs, null, 2));
                 
-                // Buscar específicamente en el nodo SaveImage (619) que contiene la imagen final
-                if (outputs["619"] && outputs["619"].images && outputs["619"].images.length > 0) {
-                  const imageInfo = outputs["619"].images[0];
+                // Buscar específicamente en el nodo SaveImage (963) que contiene la imagen final
+                if (outputs["963"] && outputs["963"].images && outputs["963"].images.length > 0) {
+                  const imageInfo = outputs["963"].images[0];
                   const imageUrl = `${COMFY_CONFIG.URL}/view?filename=${imageInfo.filename}&subfolder=${imageInfo.subfolder || ''}&type=${imageInfo.type || 'output'}`;
-                  console.log('🖼️ Imagen final generada desde nodo 619:', imageUrl);
+                  console.log('🖼️ Imagen final generada desde nodo 963:', imageUrl);
                   setLoadingProgress(100);
                   return imageUrl;
                 }
                 
-                // Buscar en el nodo alternativo (963)
-                if (outputs["963"] && outputs["963"].images && outputs["963"].images.length > 0) {
-                  const imageInfo = outputs["963"].images[0];
+                // Buscar en el nodo alternativo 619 (si existe para compatibilidad)
+                if (outputs["619"] && outputs["619"].images && outputs["619"].images.length > 0) {
+                  const imageInfo = outputs["619"].images[0];
                   const imageUrl = `${COMFY_CONFIG.URL}/view?filename=${imageInfo.filename}&subfolder=${imageInfo.subfolder || ''}&type=${imageInfo.type || 'output'}`;
-                  console.log('🖼️ Imagen encontrada en nodo 963 (con marco):', imageUrl);
+                  console.log('🖼️ Imagen encontrada en nodo 619 (compatibilidad):', imageUrl);
                   setLoadingProgress(100);
                   return imageUrl;
                 }

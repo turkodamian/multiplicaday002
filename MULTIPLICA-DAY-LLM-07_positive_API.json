@@ -1,0 +1,593 @@
+{
+  "623": {
+    "inputs": {
+      "styles": "Illustration | Cartoon"
+    },
+    "class_type": "Load Styles CSV",
+    "_meta": {
+      "title": "CHOOSE STYLE"
+    }
+  },
+  "625": {
+    "inputs": {
+      "text": "This intricate digital art illustration depicts a heartwarming moment in Argentina as a young man stands proudly on stage, capped and gowned for his university graduation ceremony. Surrounding him are friends and family members offering congratulations and support with joyful expressions. The architecture of the graduation venue is intricately detailed with ornate columns and an elaborate ceiling, setting a grand backdrop to commemorate this momentous occasion. In addition, vibrant flags bearing the Argentine national colors proudly flutter in the breeze outside. This illustrative work captures the spirit and pride felt by everyone present as they celebrate the hard-earned accomplishment of the young graduate, creating an emotionally resonant portrait of unity, achievement, and Argentinian culture.",
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      },
+      "passthrough": [
+        "941",
+        0
+      ]
+    },
+    "class_type": "Textbox",
+    "_meta": {
+      "title": "POSITIVE PROMPT"
+    }
+  },
+  "628": {
+    "inputs": {
+      "text_0": "This intricate digital art illustration depicts a heartwarming moment in Argentina as a young man stands proudly on stage, capped and gowned for his university graduation ceremony. Surrounding him are friends and family members offering congratulations and support with joyful expressions. The architecture of the graduation venue is intricately detailed with ornate columns and an elaborate ceiling, setting a grand backdrop to commemorate this momentous occasion. In addition, vibrant flags bearing the Argentine national colors proudly flutter in the breeze outside. This illustrative work captures the spirit and pride felt by everyone present as they celebrate the hard-earned accomplishment of the young graduate, creating an emotionally resonant portrait of unity, achievement, and Argentinian culture., Cartoon illustration style, whimsical and expressive characters, exaggerated features and emotions, versatile and adaptable for various storytelling purposes, 2D Cartoon style, (central character helps other people:1.5) stylized design, colorful, character happy expression, fullbody view, front shot, dof.",
+      "text": [
+        "801",
+        0
+      ]
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "GENERATED PROMPT"
+    }
+  },
+  "652": {
+    "inputs": {
+      "width": 768,
+      "height": 1072,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "IMAGE SIZE"
+    }
+  },
+  "655": {
+    "inputs": {
+      "noise_seed": 826812888782331
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "Ruido aleatorio"
+    }
+  },
+  "656": {
+    "inputs": {
+      "scheduler": "beta",
+      "steps": 10,
+      "denoise": 1,
+      "model": [
+        "949",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "STEPS"
+    }
+  },
+  "790": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "791": {
+    "inputs": {
+      "vae_name": "FLUX1\\ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Cargar VAE"
+    }
+  },
+  "792": {
+    "inputs": {
+      "unet_name": "flux1-dev-Q4_0.gguf"
+    },
+    "class_type": "UnetLoaderGGUF",
+    "_meta": {
+      "title": "Unet Loader (GGUF)"
+    }
+  },
+  "793": {
+    "inputs": {
+      "clip_name1": "clip_l-for-gguf.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "795": {
+    "inputs": {
+      "text": "",
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      },
+      "clip": [
+        "949",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "DONT USE"
+    }
+  },
+  "796": {
+    "inputs": {
+      "text": [
+        "801",
+        0
+      ],
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      },
+      "clip": [
+        "949",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive Prompt from Styles"
+    }
+  },
+  "798": {
+    "inputs": {
+      "model": [
+        "949",
+        0
+      ],
+      "conditioning": [
+        "871",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "GuíaBásica"
+    }
+  },
+  "799": {
+    "inputs": {
+      "noise": [
+        "655",
+        0
+      ],
+      "guider": [
+        "798",
+        0
+      ],
+      "sampler": [
+        "790",
+        0
+      ],
+      "sigmas": [
+        "656",
+        0
+      ],
+      "latent_image": [
+        "652",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "800": {
+    "inputs": {
+      "samples": [
+        "799",
+        1
+      ],
+      "vae": [
+        "791",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decodificación VAE"
+    }
+  },
+  "801": {
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "625",
+        0
+      ],
+      "text_b": [
+        "623",
+        0
+      ],
+      "text_c": [
+        "958",
+        0
+      ]
+    },
+    "class_type": "Text Concatenate",
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
+  "863": {
+    "inputs": {
+      "crop": "none",
+      "clip_vision": [
+        "864",
+        0
+      ],
+      "image": [
+        "866",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionEncode",
+    "_meta": {
+      "title": "CLIP Vision Encode"
+    }
+  },
+  "864": {
+    "inputs": {
+      "clip_name": "sigclip_vision_patch14_384.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Cargar CLIP Vision"
+    }
+  },
+  "865": {
+    "inputs": {
+      "style_model_name": "flux1-redux-dev.safetensors"
+    },
+    "class_type": "StyleModelLoader",
+    "_meta": {
+      "title": "Cargar Modelo de Estilo"
+    }
+  },
+  "866": {
+    "inputs": {
+      "image": "avatar4.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "REDUX STYLE TRANSFER"
+    }
+  },
+  "868": {
+    "inputs": {
+      "image_strength": "high",
+      "conditioning": [
+        "796",
+        0
+      ],
+      "style_model": [
+        "865",
+        0
+      ],
+      "clip_vision_output": [
+        "863",
+        0
+      ]
+    },
+    "class_type": "StyleModelApplySimple",
+    "_meta": {
+      "title": "STYLE STRENGTH"
+    }
+  },
+  "870": {
+    "inputs": {
+      "mix_method": "Concatenate",
+      "average_strength": 1,
+      "conditioning_1": [
+        "868",
+        0
+      ],
+      "conditioning_2": [
+        "796",
+        0
+      ]
+    },
+    "class_type": "CR Conditioning Mixer",
+    "_meta": {
+      "title": "⚙️ CR Conditioning Mixer"
+    }
+  },
+  "871": {
+    "inputs": {
+      "mix_method": "Concatenate",
+      "average_strength": 1,
+      "conditioning_1": [
+        "870",
+        0
+      ],
+      "conditioning_2": [
+        "1015",
+        0
+      ]
+    },
+    "class_type": "CR Conditioning Mixer",
+    "_meta": {
+      "title": "⚙️ CR Conditioning Mixer"
+    }
+  },
+  "939": {
+    "inputs": {
+      "text": "AYUDANDO A UN MUCHACHO EN SU GRADUACION UNIVERSITARIA ARGENTINA\n\n\n",
+      "random_seed": 2414,
+      "model": "Mistral-7B-Instruct-v0.3.Q4_K_M.gguf",
+      "max_tokens": 4100,
+      "apply_instructions": true,
+      "instructions": "Generate image prompt adding some details \"{prompt}\"",
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      }
+    },
+    "class_type": "Searge_LLM_Node",
+    "_meta": {
+      "title": "LLM PROMPT GENERATOR"
+    }
+  },
+  "941": {
+    "inputs": {
+      "text": "This intricate digital art illustration depicts a heartwarming moment in Argentina as a young man stands proudly on stage, capped and gowned for his university graduation ceremony. Surrounding him are friends and family members offering congratulations and support with joyful expressions. The architecture of the graduation venue is intricately detailed with ornate columns and an elaborate ceiling, setting a grand backdrop to commemorate this momentous occasion. In addition, vibrant flags bearing the Argentine national colors proudly flutter in the breeze outside. This illustrative work captures the spirit and pride felt by everyone present as they celebrate the hard-earned accomplishment of the young graduate, creating an emotionally resonant portrait of unity, achievement, and Argentinian culture.",
+      "anything": [
+        "939",
+        0
+      ]
+    },
+    "class_type": "easy showAnything",
+    "_meta": {
+      "title": "GENERATED PROMPT"
+    }
+  },
+  "942": {
+    "inputs": {
+      "root_dir": "output",
+      "file": "LLM prompts.txt",
+      "append": "append",
+      "insert": true,
+      "text": [
+        "801",
+        0
+      ]
+    },
+    "class_type": "SaveText|pysssss",
+    "_meta": {
+      "title": "SAVE TEXT FILE"
+    }
+  },
+  "949": {
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "792",
+        0
+      ],
+      "clip": [
+        "793",
+        0
+      ]
+    },
+    "class_type": "Power Lora Loader (rgthree)",
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "958": {
+    "inputs": {
+      "text": "2D Cartoon style, ((central character helps (another people:1.5)), stylized design, colorful, happy expression, fullbody view, front shot, dof.  \n",
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      }
+    },
+    "class_type": "Textbox",
+    "_meta": {
+      "title": "POSITIVE PROMPT"
+    }
+  },
+  "962": {
+    "inputs": {
+      "image_path": "M:\\EXPLOZION\\MARCO_FINAL-13x18-8bit.png",
+      "RGBA": "true",
+      "filename_text_extension": "true"
+    },
+    "class_type": "Image Load",
+    "_meta": {
+      "title": "Image Load"
+    }
+  },
+  "963": {
+    "inputs": {
+      "filename_prefix": "GGUF/1",
+      "images": [
+        "1001",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Guardar Imagen"
+    }
+  },
+  "965": {
+    "inputs": {
+      "resize_behavior": "source_size",
+      "image_base": [
+        "962",
+        0
+      ],
+      "image_to_paste": [
+        "996",
+        0
+      ],
+      "mask": [
+        "962",
+        0
+      ]
+    },
+    "class_type": "Paste By Mask",
+    "_meta": {
+      "title": "Paste By Mask"
+    }
+  },
+  "984": {
+    "inputs": {
+      "path": "M:\\EXPLOZION\\Multiplica_day\\DESARROLLO\\MEDIA\\GFX\\MARCO_FINAL-13x18-SinAlpha.png"
+    },
+    "class_type": "JWImageLoadRGBA",
+    "_meta": {
+      "title": "Image Load RGBA"
+    }
+  },
+  "996": {
+    "inputs": {
+      "samples": [
+        "652",
+        0
+      ],
+      "vae": [
+        "791",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decodificación VAE"
+    }
+  },
+  "1000": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "width": 1240,
+      "height": 1640,
+      "crop": "disabled",
+      "image": [
+        "800",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Ampliar Imagen"
+    }
+  },
+  "1001": {
+    "inputs": {
+      "x": 0,
+      "y": 0,
+      "offset_x": 138,
+      "offset_y": 128,
+      "destination": [
+        "1012",
+        0
+      ],
+      "source": [
+        "1000",
+        0
+      ]
+    },
+    "class_type": "ImageComposite+",
+    "_meta": {
+      "title": "🔧 Image Composite"
+    }
+  },
+  "1002": {
+    "inputs": {
+      "images": [
+        "1000",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Vista previa de imagen"
+    }
+  },
+  "1007": {
+    "inputs": {
+      "x": 0,
+      "y": 0,
+      "operation": "multiply"
+    },
+    "class_type": "MaskComposite",
+    "_meta": {
+      "title": "Composición de Máscara"
+    }
+  },
+  "1011": {
+    "inputs": {
+      "image": "M:\\EXPLOZION\\Multiplica_day\\DESARROLLO\\MEDIA\\GFX\\MARCO_FINAL-13x18-SinAlpha.png",
+      "custom_width": 0,
+      "custom_height": 0
+    },
+    "class_type": "VHS_LoadImagePath",
+    "_meta": {
+      "title": "Load Image (Path) 🎥🅥🅗🅢"
+    }
+  },
+  "1012": {
+    "inputs": {
+      "path": "M:\\EXPLOZION\\Multiplica_day\\DESARROLLO\\MEDIA\\GFX\\MARCO_FINAL-13x18-SinAlpha.png"
+    },
+    "class_type": "JWImageLoadRGB",
+    "_meta": {
+      "title": "Image Load RGB"
+    }
+  },
+  "1015": {
+    "inputs": {
+      "text": "safe for work, wholesome, polished cartoon artwork, vibrant but harmonious colors, sharp focus, smooth shading, refined textures, clear facial features, well-proportioned anatomy, natural hands and fingers, clean outlines, high resolution, professional illustration style\n",
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      },
+      "clip": [
+        "949",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "negative Prompt from Styles"
+    }
+  }
+}
